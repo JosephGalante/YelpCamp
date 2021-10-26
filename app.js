@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-const campground = require('./models/campground');
+const Campground = require('./models/campground');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useUnifiedTopology: true
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
     res.render('home')
 })
 app.get('/makecampground', async (req, res) => {
-    const camp = new campground({ title: 'My backyard', description: 'Cheap camping' });
+    const camp = new Campground({ title: 'My backyard', description: 'Cheap camping' });
     await camp.save();
     res.send(camp);
 })
