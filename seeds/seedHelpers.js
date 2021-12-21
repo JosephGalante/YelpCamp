@@ -1,7 +1,6 @@
 module.exports.descriptors = [
     'Forest',
     'Ancient',
-    'Petrified',
     'Roaring',
     'Cascade',
     'Tumbling',
@@ -16,7 +15,12 @@ module.exports.descriptors = [
     'Sea',
     'Sky',
     'Dusty',
-    'Diamond'
+    'Diamond',
+    'Cool',
+    'Serene',
+    'Lilac',
+    'Clement',
+    'Pleasant'
 ]
 
 module.exports.places = [
