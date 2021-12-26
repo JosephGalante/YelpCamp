@@ -5,6 +5,7 @@ const ejsMate = require('ejs-mate');
 const catchAsync = require('./utilities/catchAsync');
 const ExpressError = require('./utilities/ExpressError');
 const Campground = require('./models/campground');
+const { campgroundSchema } = require('./schemas.js');
 const methodOverride = require('method-override');
 const Joi = require('joi');
 
@@ -28,6 +29,18 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
+const validateCampground = (req, res, next) => {
+	const { error } = campgroundSchema.validate(req.body);
+
+	if (error) {
+		const message = error.details.map((element) => element.message).join(',');
+		throw new ExpressError(message, 400);
+	} else {
+		next();
+	}
+	// console.log(result);
+};
+
 app.get('/', (req, res) => {
 	res.render('home');
 });
@@ -46,27 +59,12 @@ app.get('/campgrounds/new', (req, res) => {
 
 app.post(
 	'/campgrounds',
+	validateCampground,
 	catchAsync(async (req, res, next) => {
 		// if (!req.body.campground) {
 		// 	throw new ExpressError('Invalid Campground Data', 400);
 		// }
 
-		const campgroundSchema = Joi.object({
-			campground : Joi.object({
-				title : Joi.string().required(),
-				price: Joi.number().required().min(0),
-				image: Joi.string().required(),
-				location: Joi.string().required(),
-				description: Joi.string().required()
-			}).required()
-		});
-		const { error } = campgroundSchema.validate(req.body);
-
-		if (error) {
-			const message = error.details.map((element) => element.message).join(',');
-			throw new ExpressError(message, 400);
-		}
-		console.log(result);
 		const campground = new Campground(req.body.campground);
 		await campground.save();
 		res.redirect(`/campgrounds/${campground._id}`);
@@ -91,6 +89,7 @@ app.get(
 
 app.put(
 	'/campgrounds/:id',
+	validateCampground,
 	catchAsync(async (req, res) => {
 		const { id } = req.params;
 		const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }, { new: true });
