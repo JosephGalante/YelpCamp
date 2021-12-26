@@ -6,6 +6,7 @@ const catchAsync = require('./utilities/catchAsync');
 const ExpressError = require('./utilities/ExpressError');
 const Campground = require('./models/campground');
 const methodOverride = require('method-override');
+const Joi = require('joi');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
 	useUnifiedTopology : true
@@ -46,9 +47,26 @@ app.get('/campgrounds/new', (req, res) => {
 app.post(
 	'/campgrounds',
 	catchAsync(async (req, res, next) => {
-		if (!req.body.campground) {
-			throw new ExpressError('Invalid Campground Data', 400);
+		// if (!req.body.campground) {
+		// 	throw new ExpressError('Invalid Campground Data', 400);
+		// }
+
+		const campgroundSchema = Joi.object({
+			campground : Joi.object({
+				title : Joi.string().required(),
+				price: Joi.number().required().min(0),
+				image: Joi.string().required(),
+				location: Joi.string().required(),
+				description: Joi.string().required()
+			}).required()
+		});
+		const { error } = campgroundSchema.validate(req.body);
+
+		if (error) {
+			const message = error.details.map((element) => element.message).join(',');
+			throw new ExpressError(message, 400);
 		}
+		console.log(result);
 		const campground = new Campground(req.body.campground);
 		await campground.save();
 		res.redirect(`/campgrounds/${campground._id}`);
