@@ -5,7 +5,7 @@ const ejsMate = require('ejs-mate');
 const catchAsync = require('./utilities/catchAsync');
 const ExpressError = require('./utilities/ExpressError');
 const Campground = require('./models/campground');
-const { campgroundSchema } = require('./schemas.js');
+const { campgroundSchema, reviewSchema } = require('./schemas.js');
 const methodOverride = require('method-override');
 const Review = require('./models/review');
 
@@ -29,6 +29,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
+//Middleware to validate the New Campground submission
 const validateCampground = (req, res, next) => {
 	const { error } = campgroundSchema.validate(req.body);
 
@@ -41,6 +42,20 @@ const validateCampground = (req, res, next) => {
 	// console.log(result);
 };
 
+//Middleware to validate the Campground Review submission
+const validateReview = (req, res, next) => {
+	const { error } = reviewSchema.validate(req.body);
+
+	if (error) {
+		const message = error.details.map((element) => element.message).join(',');
+		throw new ExpressError(message, 400);
+	} else {
+		next();
+	}
+	// console.log(result);
+};
+
+// Navigates to YelpCamp Home (Not home page that we use)
 app.get('/', (req, res) => {
 	res.render('home');
 });
@@ -108,6 +123,7 @@ app.delete(
 
 app.post(
 	'/campgrounds/:id/reviews',
+	validateReview,
 	catchAsync(async (req, res) => {
 		// res.send('You made the review')
 		const campground = await Campground.findById(req.params.id);
