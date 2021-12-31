@@ -42,35 +42,60 @@
                 </div>
                 <button class="btn btn-success">Submit</button>
             </form>
+            
             <% for(let review of campground.reviews) {%>
                 <div class="card mb-5">
                     <div class="card-body">
                         <!-- Here I am dynamically adding stars to display the review 
                         Similarly to how Google Maps, or Yelp would display reviews with stars -->
                         <% for(let i = 0; i < review.rating; i++) { %>
-                            <i class="fas fa-star full-star"></i>
+                            <i class="fas fa-star full-star" style="color: #fbbd06"></i>
                         <% } %>
                         <% for(let j = 5 - review.rating; j > 0; j--) { %>
-                                    <i class="far fa-star empty-star"></i>
+                                    <i class="far fa-star empty-star" style="color: #fbbd06"></i>
                         <% } %>
+
+                        <!-- Here I am adding a timestamp similarly looking to Google Maps Reviews -->
+                        <!-- Add 'Years Ago' timestamp -->
+                        <% const review_date = Math.floor((new Date().getTime() - review.date.getTime()) / (1000 * 3600 * 24)) %> 
+                        <% if(review_date > 364) {%> 
+                            <% if(review_date > 364 && review_date < 730) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; last year</span>
+                            <% } else if(review_date >= 730) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; <%= Math.floor(review_date / 365) %> years ago</span>
+                            <% } %>
+
+
+                        <!-- Add 'Months ago' timestamp -->
+                        <% } else if(review_date < 365 && review_date >= 32) {%>
+                            <% if(review_date > 30 && review_date < 60) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; a month ago</span>
+                            <% } else if(review_date >= 60) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; <%= Math.floor(review_date / 30) %> months ago</span>
+                            <% } %>
+
+
+                        <!-- Add 'Weeks ago' timestamp -->
+                        <%} else if(review_date < 32) {%>
+                            <% if(review_date > 6 && review_date < 14) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; last week</span>
+                            <% } else if(review_date >= 14) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; <%= Math.floor(review_date / 7) %> weeks ago</span>
+                            <% } else if(review_date === 1) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; yesterday</span>
+                            <% } else if(review_date === 0) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; today</span>
+                            <% } else if(review_date <= 6) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; <%= review_date %> days ago</span>
+                            <% } %>
+                        <% } %> 
+
                         <p class="card-text"><%= review.body %></p>
                     </div>
                 </div>
-                <% } %>
+            <% } %>
         </div>
     </div>
-
-
-    <!-- Stylizing the stars in the review to be golden -->
-    <style>
-        .full-star{
-            color: #fbbd06;
-        }
-        .empty-star{
-            color: #fbbd06;
-        }
-    </style>
-
 
     <!-- <footer>
         <a href="/campgrounds">All Campgrounds</a>

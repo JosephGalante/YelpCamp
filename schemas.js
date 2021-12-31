@@ -10,9 +10,12 @@ module.exports.campgroundSchema = Joi.object({
 	}).required()
 });
 
+let d = new Date();
+let current_full_date = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
 module.exports.reviewSchema = Joi.object({
 	review : Joi.object({
-		rating : Joi.number().required().min(1).max(5),
-		body   : Joi.string().required().min(3)
+		rating: Joi.number().required().min(1).max(5),
+		body: Joi.string().required().min(3),
+		date: Joi.date().min(current_full_date).max(current_full_date).default(current_full_date)
 	}).required()
 });

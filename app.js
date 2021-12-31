@@ -32,27 +32,23 @@ app.use(methodOverride('_method'));
 //Middleware to validate the New Campground submission
 const validateCampground = (req, res, next) => {
 	const { error } = campgroundSchema.validate(req.body);
-
 	if (error) {
 		const message = error.details.map((element) => element.message).join(',');
 		throw new ExpressError(message, 400);
 	} else {
 		next();
 	}
-	// console.log(result);
 };
 
 //Middleware to validate the Campground Review submission
 const validateReview = (req, res, next) => {
 	const { error } = reviewSchema.validate(req.body);
-
 	if (error) {
 		const message = error.details.map((element) => element.message).join(',');
 		throw new ExpressError(message, 400);
 	} else {
 		next();
 	}
-	// console.log(result);
 };
 
 // Navigates to YelpCamp Home (Not home page that we use)
@@ -76,10 +72,6 @@ app.post(
 	'/campgrounds',
 	validateCampground,
 	catchAsync(async (req, res, next) => {
-		// if (!req.body.campground) {
-		// 	throw new ExpressError('Invalid Campground Data', 400);
-		// }
-
 		const campground = new Campground(req.body.campground);
 		await campground.save();
 		res.redirect(`/campgrounds/${campground._id}`);
@@ -90,7 +82,6 @@ app.get(
 	'/campgrounds/:id',
 	catchAsync(async (req, res) => {
 		const campground = await Campground.findById(req.params.id).populate('reviews');
-		// console.log(campground);
 		res.render('campgrounds/show', { campground });
 	})
 );
@@ -126,7 +117,6 @@ app.post(
 	'/campgrounds/:id/reviews',
 	validateReview,
 	catchAsync(async (req, res) => {
-		// res.send('You made the review')
 		const campground = await Campground.findById(req.params.id);
 		const review = new Review(req.body.review);
 		campground.reviews.push(review);
