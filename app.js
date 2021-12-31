@@ -7,7 +7,7 @@ const ExpressError = require('./utilities/ExpressError');
 const Campground = require('./models/campground');
 const { campgroundSchema } = require('./schemas.js');
 const methodOverride = require('method-override');
-const Joi = require('joi');
+const Review = require('./models/review');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
 	useUnifiedTopology : true
@@ -103,6 +103,19 @@ app.delete(
 		const { id } = req.params;
 		await Campground.findByIdAndDelete(id);
 		res.redirect('/campgrounds');
+	})
+);
+
+app.post(
+	'/campgrounds/:id/reviews',
+	catchAsync(async (req, res) => {
+		// res.send('You made the review')
+		const campground = await Campground.findById(req.params.id);
+		const review = new Review(req.body.review);
+		campground.reviews.push(review);
+		await review.save();
+		await campground.save();
+		res.redirect(`/campgrounds/${campground._id}`);
 	})
 );
 
