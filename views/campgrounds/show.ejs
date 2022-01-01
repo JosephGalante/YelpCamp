@@ -52,7 +52,7 @@
                             <i class="fas fa-star full-star" style="color: #fbbd06"></i>
                         <% } %>
                         <% for(let j = 5 - review.rating; j > 0; j--) { %>
-                                    <i class="far fa-star empty-star" style="color: #fbbd06"></i>
+                            <i class="far fa-star empty-star" style="color: #fbbd06"></i>
                         <% } %>
 
                         <!-- Here I am adding a timestamp similarly looking to Google Maps Reviews -->
@@ -91,6 +91,11 @@
                         <% } %> 
 
                         <p class="card-text"><%= review.body %></p>
+                        <form action="/campgrounds/<%= campground._id %>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                        <button class="btn btn-sm btn-danger">
+                            Delete
+                        </button>
+                    </form>
                     </div>
                 </div>
             <% } %>

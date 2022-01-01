@@ -126,6 +126,18 @@ app.post(
 	})
 );
 
+app.delete('/campgrounds/:campId/reviews/:reviewId', catchAsync(async (req, res) => {
+
+	// Note (Not sure if this is set in stone or I'm doing something wrong): 
+	// When destructuring req.params, the variable names MUST BE the same as
+	// The keys in req.params for some reason
+	const { campId, reviewId } = req.params;
+	await Campground.findByIdAndUpdate(campId, { $pull: { reviews: reviewId } })
+	await Review.findByIdAndDelete(reviewId);
+	
+	res.redirect(`/campgrounds/${campId}`);
+}) )
+
 app.all('*', (req, res, next) => {
 	// res.send('404 Error')
 	next(new ExpressError('Page Not Found', 404));
