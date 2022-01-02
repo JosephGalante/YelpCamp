@@ -5,6 +5,7 @@ const ExpressError = require('../utilities/ExpressError');
 const Review = require('../models/review');
 const Campground = require('../models/campground');
 const { reviewSchema } = require('../schemas.js');
+const { findById } = require('../models/review');
 
 //Middleware to validate the Campground Review submission
 const validateReview = (req, res, next) => {
@@ -18,25 +19,27 @@ const validateReview = (req, res, next) => {
 };
 
 router.post('/', validateReview, catchAsync(async (req, res) => {
-		const campground = await Campground.findById(req.params.id);
-		const review = new Review(req.body.review);
-		campground.reviews.push(review);
-		await review.save();
-		await campground.save();
-		res.redirect(`/campgrounds/${campground._id}`);
-	})
-);
+	const campground = await Campground.findById(req.params.id);
+	const review = new Review(req.body.review);
+	campground.reviews.push(review);
+	await review.save();
+	await campground.save();
+	req.flash('Success', `Successfully reviewed ${campground.title}!`);
+	res.redirect(`/campgrounds/${campground._id}`);
+}));
 
 router.delete('/:reviewId', catchAsync(async (req, res) => {
 
 	// Note (Not sure if this is set in stone or I'm doing something wrong): 
 	// When destructuring req.params, the variable names MUST BE the same as
 	// The keys in req.params for some reason
-    const { id, reviewId } = req.params;
+	const { id, reviewId } = req.params;
+	const campground = await Campground.findById(id);
+
 	await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } })
 	await Review.findByIdAndDelete(reviewId);
-	
+	req.flash('Success', `Successfully deleted review for ${campground.title}`);
 	res.redirect(`/campgrounds/${id}`);
-}))
+}));
 
 module.exports = router;
