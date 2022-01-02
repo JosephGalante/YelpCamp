@@ -3,6 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const session = require('express-session');
+const flash = require('connect-flash');
 const ExpressError = require('./utilities/ExpressError');
 const methodOverride = require('method-override');
 const campgrounds = require('./routes/campgrounds');
@@ -28,20 +29,26 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(flash());
 
 const sessionConfig = {
-	secret: 'ShartyWaffles',
-	resave: false,
-	saveUninitialized: true,
-	cookie: {
-		httpOnly: true,
+	secret            : 'ShartyWaffles',
+	resave            : false,
+	saveUninitialized : true,
+	cookie            : {
+		httpOnly : true,
 		//That product is 1 week (7 days)
-		expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
-		maxAge: (1000 * 60 * 60 * 24 * 7)
-
+		expires  : Date.now() + 1000 * 60 * 60 * 24 * 7,
+		maxAge   : 1000 * 60 * 60 * 24 * 7
 	}
-}
-app.use(session(sessionConfig))
+};
+app.use(session(sessionConfig));
+
+app.use((req, res, next) => {
+	res.locals.success = req.flash('Success');
+	res.locals.error = req.flash('Error');
+	next();
+});
 
 app.use('/campgrounds', campgrounds);
 app.use('/campgrounds/:id/reviews', reviews);
