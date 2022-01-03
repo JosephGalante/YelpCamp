@@ -16,9 +16,7 @@ const validateCampground = (req, res, next) => {
 	}
 };
 
-router.get(
-	'/',
-	catchAsync(async (req, res) => {
+router.get('/', catchAsync(async (req, res) => {
 		const campgrounds = await Campground.find({});
 		res.render('campgrounds/index', { campgrounds });
 	})
@@ -28,10 +26,7 @@ router.get('/new', (req, res) => {
 	res.render('campgrounds/new');
 });
 
-router.post(
-	'/',
-	validateCampground,
-	catchAsync(async (req, res, next) => {
+router.post('/', validateCampground, catchAsync(async (req, res, next) => {
 		const campground = new Campground(req.body.campground);
 		await campground.save();
 		req.flash('Success', 'Successfully made new Campground!');
@@ -39,9 +34,7 @@ router.post(
 	})
 );
 
-router.get(
-	'/:id',
-	catchAsync(async (req, res) => {
+router.get('/:id', catchAsync(async (req, res) => {
 		const campground = await Campground.findById(req.params.id).populate('reviews');
 		if (!campground) {
 			req.flash('Error', 'Error: That Campground does not exist!');
@@ -51,9 +44,7 @@ router.get(
 	})
 );
 
-router.get(
-	'/:id/edit',
-	catchAsync(async (req, res) => {
+router.get('/:id/edit', catchAsync(async (req, res) => {
 		const campground = await Campground.findById(req.params.id);
 		if (!campground) {
 			req.flash('Error', 'Error: That Campground does not exist!');
@@ -63,10 +54,7 @@ router.get(
 	})
 );
 
-router.put(
-	'/:id',
-	validateCampground,
-	catchAsync(async (req, res) => {
+router.put('/:id', validateCampground, catchAsync(async (req, res) => {
 		const { id } = req.params;
 		const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }, { new: true });
 		req.flash('Success', 'Successfully updated Campground!');
@@ -74,9 +62,7 @@ router.put(
 	})
 );
 
-router.delete(
-	'/:id',
-	catchAsync(async (req, res) => {
+router.delete('/:id', catchAsync(async (req, res) => {
 		const { id } = req.params;
 		const campground = await Campground.findById(id);
 		await Campground.findByIdAndDelete(id);
