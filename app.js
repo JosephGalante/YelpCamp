@@ -5,10 +5,12 @@ const ejsMate = require('ejs-mate');
 const session = require('express-session');
 const flash = require('connect-flash');
 const ExpressError = require('./utilities/ExpressError');
-const passport = require('passport');
+const methodOverride = require('method-override');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
-const methodOverride = require('method-override');
+const passport = require('passport');
+
+
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
@@ -26,7 +28,6 @@ db.once('open', () => {
 const app = express();
 
 app.engine('ejs', ejsMate);
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -80,14 +81,13 @@ app.get('/', (req, res) => {
 });
 
 app.all('*', (req, res, next) => {
-	// res.send('404 Error')
 	next(new ExpressError('Page Not Found', 404));
 });
 
 app.use((err, req, res, next) => {
-	const { status = 500, message = 'Something went wrong' } = err;
+	const { status = 500 } = err;
 	if (!err.message) {
-		err.message = 'Something went wrong. Stupid';
+		err.message = 'Something went wrong.';
 	}
 	res.status(status).render('error', { err });
 });
