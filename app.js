@@ -5,9 +5,13 @@ const ejsMate = require('ejs-mate');
 const session = require('express-session');
 const flash = require('connect-flash');
 const ExpressError = require('./utilities/ExpressError');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user');
 const methodOverride = require('method-override');
-const campgrounds = require('./routes/campgrounds');
-const reviews = require('./routes/reviews');
+const campgroundRoutes = require('./routes/campgrounds');
+const reviewRoutes = require('./routes/reviews');
+const userRoutes = require('./routes/users');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
 	useUnifiedTopology : true
@@ -29,10 +33,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(flash());
+
 
 const sessionConfig = {
-	secret            : 'ShartyWaffles',
+	secret            : 'Secret Agent Randy Beans',
 	resave            : false,
 	saveUninitialized : true,
 	cookie            : {
@@ -43,6 +47,13 @@ const sessionConfig = {
 	}
 };
 app.use(session(sessionConfig));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
 	res.locals.success = req.flash('Success');
@@ -50,8 +61,18 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/campgrounds', campgrounds);
-app.use('/campgrounds/:id/reviews', reviews);
+app.get('/fakeuser', async (req, res) => {
+	const user = new User({
+		email: 'Jeg150@pitt.edu',
+		username: 'jeg150'
+	});
+	const newUser = await User.register(user, 'monkey');
+	res.send(newUser);
+})
+
+app.use('/campgrounds', campgroundRoutes);
+app.use('/campgrounds/:id/reviews', reviewRoutes);
+app.use('/', userRoutes);
 
 // Navigates to YelpCamp Home (Not home page that we use)
 app.get('/', (req, res) => {
