@@ -30,14 +30,14 @@ router.get('/new', isLoggedIn, (req, res) => {
 router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
 		const campground = new Campground(req.body.campground);
 		await campground.save();
-		req.flash('Success', 'Successfully made new Campground!');
+		req.flash('success', 'Successfully made new Campground!');
 		res.redirect(`/campgrounds/${campground._id}`);
 }));
 
 router.get('/:id', catchAsync(async (req, res) => {
 		const campground = await Campground.findById(req.params.id).populate('reviews');
 		if (!campground) {
-			req.flash('Error', 'Error: That Campground does not exist!');
+			req.flash('error', 'Error: That Campground does not exist!');
 			return res.redirect('/campgrounds');
 		}
 		res.render('campgrounds/show', { campground });
@@ -46,7 +46,7 @@ router.get('/:id', catchAsync(async (req, res) => {
 router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
 		const campground = await Campground.findById(req.params.id);
 		if (!campground) {
-			req.flash('Error', 'Error: That Campground does not exist!');
+			req.flash('error', 'Error: That Campground does not exist!');
 			return res.redirect('/campgrounds');
 		}
 		res.render('campgrounds/edit', { campground });
@@ -55,7 +55,7 @@ router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
 router.put('/:id', isLoggedIn, validateCampground, catchAsync(async (req, res) => {
 		const { id } = req.params;
 		const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }, { new: true });
-		req.flash('Success', 'Successfully updated Campground!');
+		req.flash('success', 'Successfully updated Campground!');
 		res.redirect(`/campgrounds/${campground._id}`);
 	})
 );
@@ -64,7 +64,7 @@ router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
 		const { id } = req.params;
 		const campground = await Campground.findById(id);
 		await Campground.findByIdAndDelete(id);
-		req.flash('Success', `Successfully deleted ${campground.title} Campground!`);
+		req.flash('success', `Successfully deleted ${campground.title} Campground!`);
 		res.redirect('/campgrounds');
 	})
 );
