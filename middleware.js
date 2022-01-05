@@ -1,6 +1,6 @@
-module.exports.isLoggedIn = (req, res, next) => {
-    console.log(`Req.user is...${req.user}`);
+module.exports.isLoggedIn = (req, res, next) => {  
     if (!req.isAuthenticated()) {
+        req.session.returnTo = req.originalUrl;
         req.flash('Error', 'You must be signed in first!');
         return res.redirect('/login');
     }
