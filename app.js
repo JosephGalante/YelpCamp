@@ -56,7 +56,14 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// KEEP THESE FLASH MESSAGES LOWER-CASED!
 app.use((req, res, next) => {
+
+	// This helps redirect not-logged-in users to the 
+	// original URL from whence they came
+	if(!['/login', '/'].includes(req.originalUrl)) {
+        req.session.returnTo = req.originalUrl;
+    }
 	res.locals.currentUser = req.user;
 	res.locals.success = req.flash('success');
 	res.locals.error = req.flash('error');
