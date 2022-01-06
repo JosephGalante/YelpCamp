@@ -1,4 +1,4 @@
-<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">YelpCamp</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
@@ -16,6 +16,7 @@
                     <a href="/login" class="nav-link">Login</a>
                     <a href="/register" class="nav-link">Sign Up</a>
                 <% } else { %>
+                    <span class="navbar-text me-3">Hi, <%= currentUser.username %> </span> 
                     <a href="/logout" class="nav-link">Logout</a>
                 <% } %>
             </div>
