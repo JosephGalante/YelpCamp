@@ -48,7 +48,12 @@ module.exports.validateCampground = (req, res, next) => {
 //Middleware to validate the Campground Review submission
 module.exports.validateReview = (req, res, next) => {
 	const { error } = reviewSchema.validate(req.body);
-	if (error) {
+	const { id } = req.params;
+	if (error && error.details[0].type == 'number.min') {
+		req.flash('error', 'You must provide a rating!');
+		return res.redirect(`/campgrounds/${id}`)
+	}
+	else if (error) {
 		const message = error.details.map((element) => element.message).join(',');
 		throw new ExpressError(message, 400);
 	} else {
