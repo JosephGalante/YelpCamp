@@ -7,6 +7,10 @@ let current_full_date = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
 const reviewSchema = new Schema({
 	body   : String,
 	rating: Number,
+	author: {
+		type: Schema.Types.ObjectId,
+		ref: 'User'
+	},
 	date: {
 		type: Date,
 		default: current_full_date

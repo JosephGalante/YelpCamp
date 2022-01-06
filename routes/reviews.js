@@ -3,11 +3,12 @@ const router = express.Router({mergeParams: true});
 const catchAsync = require('../utilities/catchAsync');
 const Review = require('../models/review');
 const Campground = require('../models/campground');
-const { validateReview } = require('../middleware');
+const { isLoggedIn, validateReview, isReviewOwner } = require('../middleware');
 
-router.post('/', validateReview, catchAsync(async (req, res) => {
+router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res) => {
 	const campground = await Campground.findById(req.params.id);
 	const review = new Review(req.body.review);
+	review.author = req.user._id;
 	campground.reviews.push(review);
 	await review.save();
 	await campground.save();
@@ -15,7 +16,7 @@ router.post('/', validateReview, catchAsync(async (req, res) => {
 	res.redirect(`/campgrounds/${campground._id}`);
 }));
 
-router.delete('/:reviewId', catchAsync(async (req, res) => {
+router.delete('/:reviewId', isLoggedIn, isReviewOwner,catchAsync(async (req, res) => {
 
 	// Note (Not sure if this is set in stone or I'm doing something wrong): 
 	// When destructuring req.params, the variable names MUST BE the same as
