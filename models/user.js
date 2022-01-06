@@ -10,6 +10,9 @@ const UserSchema = new Schema({
     }
 });
 
+// Second parameter does two things:
+//      -Makes login case insensitive
+//      -Ensures no users can have same username but different capitalization schemes
 UserSchema.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model('User', UserSchema);

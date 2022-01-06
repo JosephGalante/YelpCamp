@@ -22,6 +22,7 @@ const seedDB = async () => {
 		let price_unrounded = Math.floor(Math.random() * 30) + 10.99;
 		let price_rounded = price_unrounded.toFixed(2);
 		const camp = new Campground({
+			author      : '61d611d58e6a547c925c777d',
 			location    : `${cities[random1000].city}, ${cities[random1000].state}`,
 			title       : `${sample(descriptors)} ${sample(places)}`,
 			image       : 'https://source.unsplash.com/collection/483251',

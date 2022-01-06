@@ -58,26 +58,15 @@ passport.deserializeUser(User.deserializeUser());
 
 // KEEP THESE FLASH MESSAGES LOWER-CASED!
 app.use((req, res, next) => {
-
-	// This helps redirect not-logged-in users to the 
-	// original URL from whence they came
-	if(!['/login', '/'].includes(req.originalUrl)) {
-        req.session.returnTo = req.originalUrl;
-    }
+	if (!['/login', '/', '/register'].includes(req.originalUrl)) {
+		req.session.previousReturnTo = req.session.returnTo; // store the previous url
+		req.session.returnTo = req.originalUrl; // assign a new url
+	}
 	res.locals.currentUser = req.user;
 	res.locals.success = req.flash('success');
 	res.locals.error = req.flash('error');
 	next();
 });
-
-app.get('/fakeuser', async (req, res) => {
-	const user = new User({
-		email: 'Jeg150@pitt.edu',
-		username: 'jeg150'
-	});
-	const newUser = await User.register(user, 'monkey');
-	res.send(newUser);
-})
 
 app.use('/campgrounds', campgroundRoutes);
 app.use('/campgrounds/:id/reviews', reviewRoutes);
@@ -89,6 +78,7 @@ app.get('/', (req, res) => {
 });
 
 app.all('*', (req, res, next) => {
+	req.session.returnTo = req.session.previousReturnTo;
 	next(new ExpressError('Page Not Found', 404));
 });
 
