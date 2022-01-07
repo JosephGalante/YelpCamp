@@ -28,7 +28,7 @@ const seedDB = async () => {
 			description : 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quidem enim illum tenetur id inventore assumenda ex fugit fugiat, exercitationem quam reprehenderit! Dolorem, illo iure ad atque veniam esse nostrum adipisci?',
 			price: price_rounded,
 			images: [{
-      			url: 'https://res.cloudinary.com/dlbgh2yop/image/upload/v1641525759/YelpCamp/duc2s3rlslzmvewaghzj.jpg',
+      			url: 'https://res.cloudinary.com/dlbgh2yop/image/upload/v1641508771/YelpCamp/f7ovdafkbazyir04yijf.jpg',
       			filename: 'YelpCamp/duc2s3rlslzmvewaghzj'
     		}]
 		});
