@@ -6,7 +6,8 @@ module.exports.campgroundSchema = Joi.object({
 		price       : Joi.number().required().min(0),
 		location    : Joi.string().required().min(2).max(128),
 		description : Joi.string().required()
-	}).required()
+	}).required(),
+	deleteImages: Joi.array()
 });
 
 let d = new Date();
