@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utilities/catchAsync');
-const Campground = require('../models/campground');
 const { isLoggedIn, isOwner, validateCampground } = require('../middleware');
-
+const { storage } = require('../cloudinary');
+const multer = require('multer');
+const upload = multer({ storage });
 // ALL OF THE CAMPGROUND ROUTE HANDLING IS IN THE
 // ./controllers/campgrounds.js folder
 const campgrounds = require('../controllers/campgrounds');
 
 router.route('/')
     .get(catchAsync(campgrounds.index))
-    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
+    .post(isLoggedIn, upload.array('campground[image]'), validateCampground, catchAsync(campgrounds.createCampground));
 
 router.get('/new', isLoggedIn, campgrounds.renderNewForm);
 

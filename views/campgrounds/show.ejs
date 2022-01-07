@@ -3,7 +3,9 @@
     <div class="row">
         <div class="col-8">
             <div class="card mb-3">
-                <img src="<%= campground.image %>" class="card-img-top" alt="...">
+                <% for(let image of campground.images) {%> 
+                    <img src="<%= image.url %>" class="card-img-top" alt="A picture of the campground">
+                <% } %> 
                 <div class="card-body">
                     <h2 class="card-title">
                         <%= campground.title%>
@@ -32,7 +34,7 @@
                 </div>
             </div>
         </div>
-
+        <% console.log(campground) %> 
         
         <div class="col-4">
             <% if(currentUser) {%>

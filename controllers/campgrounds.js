@@ -11,6 +11,8 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.createCampground = async (req, res) => {
 	const campground = new Campground(req.body.campground);
+	//Map over the array of images and add it to the Campground Model
+	campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
 	campground.author = req.user._id;
 	await campground.save();
 	req.flash('success', 'Successfully made new Campground!');
