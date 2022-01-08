@@ -62,7 +62,6 @@ map.on('load', () => {
 
 	// inspect a cluster on click
     map.on('click', 'clusters', (e) => {
-        console.log(e.features[0])
 		const features = map.queryRenderedFeatures(e.point, {
 			layers : [ 'clusters' ]
 		});
