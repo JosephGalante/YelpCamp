@@ -6,7 +6,7 @@
                 <div class="carousel-inner">
                     <% campground.images.forEach((image, index) => { %>
                         <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                            <img src="<%= image.url %> " class="d-block w-100" alt="">
+                            <img src="<%= image.url %> " class="d-block w-100 rounded" alt="">
                         </div>
                     <% }) %>  
                 </div>
@@ -90,7 +90,7 @@
                 <div class="card mb-4">
                     <div class="card-body ">
 
-                        <!-- //FIXME : The verticalization of the elements in this section element isincorrect -->
+                        <!-- //FIXME : The verticalization of the elements in this section element is incorrect -->
                         <section style="display: flex; justify-content: flex-start; align-items: center;">
                             <div style="display: inline-block; flex-direction: row; align-items: center; justify-content: center; height: 40px; width: 40px; border-radius: 50%; background-color: grey;">
                                 <div style="align-self: center; text-align: center; vertical-align: center; margin-top: 0.67em" class="">
