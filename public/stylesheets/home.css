@@ -1,5 +1,13 @@
 body {
+     /* These styles beautifully style the background  */
     height: 100vh;
+    background-image: linear-gradient(rgba(0,0,0, 0.5), rgba(0,0,0, 0.5)), url("https://images.unsplash.com/photo-1502218808493-e5fd26249efc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80");
+    background-size: cover;
+
+    /* This specific style is perfect for always keeping 
+        the background image in the center of the screen 
+    */
+    background-position: center;
 }
 
 .cover-container{
