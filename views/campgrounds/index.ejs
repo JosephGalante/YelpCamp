@@ -15,7 +15,26 @@
                     <div class="card-body">
                         <h5 class="card-title">
                             <%= campground.title %>
-                        </h5>
+                        </h5> 
+                        
+                        <div class="text-muted">
+                        <% if (campground.reviews.length > 0) { %>
+                            <% let avgRating = 0; %>  
+                            <% for(let review of campground.reviews) {%>
+                                <% avgRating += review.rating; %>
+                            <% } %>
+                            <% avgRating /= campground.reviews.length; %>
+                            <%= Math.round(avgRating * 2) / 2 %>
+                            <% for(let i = 0; i < Math.floor(avgRating); i++) {%>
+                                <i class="fas fa-star full-star" style="color: #fbbd06"></i>
+                            <% } %>
+                            <% if (avgRating - Math.floor(avgRating) !== 0) { %>
+                                <i class="fas fa-star-half-alt" style="color: #fbbd06"></i>
+                            <% } %> 
+                            <a class="ms-2"style="text-decoration: none;" href="/campgrounds/<%= campground._id %> "><%= campground.reviews.length %> reviews</a>
+                        <% } %>
+                        </div>
+                        
                         <p class="card-text">
                             <%= campground.description %>
                         </p>
