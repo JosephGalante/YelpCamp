@@ -12,6 +12,7 @@ ImageSchema.virtual('thumbnail').get(function () {
 	return this.url.replace('/upload', '/upload/w_200');
 });
 
+const opts = { toJSON: { virtuals: true } };
 const CampgroundSchema = new Schema({
 	title       : String,
 	images		: [ImageSchema],
@@ -39,6 +40,10 @@ const CampgroundSchema = new Schema({
 			ref  : 'Review'
 		}
 	]
+}, opts);
+
+CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
+	return `<h4>${this.title}</h4><p class="mb-1"><b>${this.location}</b></p><a href="/campgrounds/${this._id}">Go to Campground</a>`;
 });
 
 // This deletes all of the reviews associated with a Campground
