@@ -2,9 +2,10 @@
 <link rel="stylesheet" href="/stylesheets/campgrounds.css">
 <div class="mb-3" id="map" style="width: 100%; height: 500px;"></div>
     <h1>All Campgrounds</h1>
-    <div>
+
+    <!-- <div>
         <a href="/campgrounds/new">Add Campground</a>
-    </div>
+    </div> -->
 
     <% for(let campground of campgrounds) { %>
         <div class="card mb-3">
@@ -12,7 +13,7 @@
                 
                 <div class="col-md-4">
                     <a class="campground-link" href="/campgrounds/<%= campground._id %> ">
-                        <img class="img-fluid" alt="" src="<%= campground.images[0].url %>">
+                        <img class="img-fluid rounded" alt="" src="<%= campground.images[0].url %>">
                     </a>
                 </div>
                 
@@ -33,13 +34,13 @@
                                 <% avgRating += review.rating; %>
                             <% } %>
                             <% avgRating /= campground.reviews.length; %>
-                            <% let emptyStars = 5 - Math.ceil((Math.round(avgRating * 10) / 10).toFixed(1)); %> 
+                            <% let emptyStars=5 - Math.ceil(Math.round(avgRating * 2) / 2); %>
 
                             <span class="me-1"><%= (Math.round(avgRating * 10) / 10).toFixed(1) %></span>
                             <% for(let i = 0; i < Math.floor(avgRating); i++) {%>
                                 <i class="fas fa-star full-star" style="color: #fbbd06"></i>
                             <% } %>
-                            <% if (avgRating - Math.floor(avgRating) !== 0) { %>
+                            <% if (avgRating - Math.floor(avgRating) > 0.2) { %>
                                 <i class="fas fa-star-half-alt" style="color: #fbbd06"></i>
                             <% } %> 
                             <% for(let i = 0; i < emptyStars; i++) {%>
