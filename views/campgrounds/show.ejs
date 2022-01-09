@@ -1,7 +1,7 @@
 <% layout('layouts/boilerplate') %>
 <link rel="stylesheet" href="/stylesheets/stars.css">
     <div class="row">
-        <div class="col-8">
+        <div class="col-7">
             <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <% campground.images.forEach((image, index) => { %>
@@ -53,10 +53,94 @@
             </div>
         </div>
         
-        <div class="col-4">
-            <div class="img-fluid rounded mb-4" id="map" style="height: 40%; width: 100%;"></div>
+        <div class="col-5">
+            <div id="map" style="width: 100%; height: 300px;"></div>
+
+
+
+            <!-- Vertically centered my first HTML element all on my own! Yeay
+                Using Flexbox I centered the 5/4/3/2/1 Star progress label-->
+
+            <div class="container px-0">
+                <div class="row">
+                    <div class="col-7">
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: center">
+                            <label for="star-5" class="text-muted me-2">5</label>
+                            <div class="progress" style="width: 100%" >
+                                <div id="star-5" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: start">
+                            <label for="star-4" class="text-muted me-2">4</label>
+                            <div class="progress" style="width: 100%" >
+                                <div id="star-4" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: start">
+                            <label for="star-3" class="text-muted me-2">3</label>
+                            <div class="progress" style="width: 100%" >
+                                <div id="star-3" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: start">
+                            <label for="star-2" class="text-muted me-2">2</label>
+                            <div class="progress" style="width: 100%" >
+                                <div id="star-2" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: start">
+                            <label for="star-1" class="text-muted me-2">1</label>
+                            <div class="progress" style="width: 100%">
+                                <div id="star-1" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-5" style="display: flex; align-items: center; justify-content: center; flex-direction: column">
+                        <% if (campground.reviews.length> 0) { %>
+                            <% let avgRating=0; %>
+                            <% for(review of campground.reviews) {%>
+                                <% avgRating += review.rating; %>
+                            <% } %>
+                            <% avgRating /= campground.reviews.length; %>
+                            
+                            <% let emptyStars = 5 - Math.ceil(Math.round(avgRating * 2) / 2); %> 
+                        
+                            <span class="display-2 me-1"> 
+                                <%= (Math.round(avgRating * 10) / 10).toFixed(1) %>
+                            </span>
+                            <div>
+                            
+                            <% for(let i = 0; i < Math.floor(avgRating); i++) {%>
+                                <i class="fas fa-star full-star" style="color: #fbbd06"></i>
+                            <% } %>
+                            <% if (avgRating - Math.floor(avgRating) > 0.2) { %>
+                                <i class="fas fa-star-half-alt" style="color: #fbbd06"></i>
+                            <% } %>
+                            <% for(let i = 0; i < emptyStars; i++) {%>
+                                <i class="far fa-star empty-star" style="color: #fbbd06"></i>
+                            <% } %>
+                            </div>
+                        <% } else {%>
+                            <span class="display-2 me-1">N/A</span>
+                        <% } %> 
+
+                        <div class="text-muted">
+                            <%= campground.reviews.length %> reviews
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+                    
+                    
+                
+
+
+
             <% if(currentUser) {%>
-                <h3 class="mb-3">Leave a Review!</h3>
+                <h3 class="mt-5" style="text-align: center">Leave a Review!</h3>
                 <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" class="mb-3 validated-form"
                     novalidate>
                     <div class="mb-4">
@@ -162,6 +246,35 @@
 <script>
     const mapToken = '<%-process.env.MAPBOX_TOKEN %>';
     const campground = <%-JSON.stringify(campground)%>;
+
+    const ratings = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+    }
+
+    let avgRating = 0;
+    for(review of campground.reviews){
+        ratings[`${review.rating}`] = ratings[`${review.rating}`] + 1; 
+        avgRating += review.rating;
+    }
+    avgRating /= campground.reviews.length;
+    avgRating = (Math.round(avgRating * 10) / 10).toFixed(1)
+    
+    for(const [rating, total] of Object.entries(ratings)){
+        const bar = document.getElementById(`star-${rating}`);
+        const barWidth = `${Math.round(total / campground.reviews.length * 100)}%`;
+        // console.log(barWidth);
+        bar.style.width = barWidth;
+    }
+
+    
+
+    
 </script>
+
+<!-- Dynamically filling out star rating progress bars -->
 <script src="/javascripts/showPageMap.js"></script>
     
