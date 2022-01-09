@@ -25,7 +25,7 @@ module.exports.isOwner = async (req, res, next) => {
 
 // Ensures that the logged in user is the owner of the review
 module.exports.isReviewOwner = async (req, res, next) => {
-    const { id, reviewId } = req.params;
+	const { id, reviewId } = req.params;
     const review = await Review.findById(reviewId);
 	if (!review.author.equals(req.user._id)) {
 		req.flash('error', 'You do not have permission to do that');
@@ -46,12 +46,29 @@ module.exports.validateCampground = (req, res, next) => {
 };
 
 //Middleware to validate the Campground Review submission
-module.exports.validateReview = (req, res, next) => {
+module.exports.validateReview = async (req, res, next) => {
 	const { error } = reviewSchema.validate(req.body);
-	const { id } = req.params;
-	if (error && error.details[0].type == 'number.min') {
+	const { id: campId } = req.params;
+	
+	//=====================================================
+	//Prevent a user from reviewing a place more than once
+	const campground = await Campground.findById(campId).populate({
+		path: 'reviews',
+		populate: {
+			path: 	'author',
+		},
+		match: {author: {$eq: req.user.id}}
+	});
+	
+	if (campground.reviews.length) {
+		req.flash('error', 'You have already reviewed this Campground!');
+		return res.redirect(`/campgrounds/${campId}`)
+	}
+	//=====================================================
+	
+	if (error && error.details[0].type === 'number.min') {
 		req.flash('error', 'You must provide a rating!');
-		return res.redirect(`/campgrounds/${id}`)
+		return res.redirect(`/campgrounds/${campId}`)
 	}
 	else if (error) {
 		const message = error.details.map((element) => element.message).join(',');
