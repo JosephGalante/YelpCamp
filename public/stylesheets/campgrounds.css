@@ -1,4 +1,4 @@
-.campground-card:hover {
+.card:hover {
     background-color: #f3f3f3;
     cursor: pointer;
 }
@@ -11,4 +11,12 @@
 .campground-link:hover {
     color: black;
     text-decoration: none;
+}
+
+.reviewLink{
+    text-decoration: none;
+}
+
+.reviewLink:hover{
+    text-decoration: underline;
 }

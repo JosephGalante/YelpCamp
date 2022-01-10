@@ -128,13 +128,15 @@
                             <%= campground.reviews.length %> reviews
                         </div>
                     </div>
-                    
+                    <% if(!campground.reviews.length && !currentUser){%> 
+                        <div class="h3 mt-3" style="display: flex; justify-content: center; text-align: center">Login/Sign Up To Leave A Review!</div>
+                    <%}%> 
                 </div>
             </div>
                     
 
             <% if(currentUser) {%>
-                <h3 class="mt-5" style="text-align: center">Leave a Review!</h3>
+                <h3 class="mt-4" style="text-align: center">Leave a Review!</h3>
                 <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" class="mb-3 validated-form"
                     novalidate>
                     <div class="mb-4">
