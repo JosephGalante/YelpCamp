@@ -59,15 +59,19 @@ module.exports.validateReview = async (req, res, next) => {
 		},
 		match: {author: {$eq: req.user.id}}
 	});
-	
+ 
 	if (campground.reviews.length) {
 		req.flash('error', 'You have already reviewed this Campground!');
 		return res.redirect(`/campgrounds/${campId}`)
 	}
 	//=====================================================
-	
+ 
 	if (error && error.details[0].type === 'number.min') {
 		req.flash('error', 'You must provide a rating!');
+		return res.redirect(`/campgrounds/${campId}`)
+	}
+	if (error && error.details[0].type === 'string.escapeHTML') {
+		req.flash('error', 'You cannot provide HTML in the review!');
 		return res.redirect(`/campgrounds/${campId}`)
 	}
 	else if (error) {
