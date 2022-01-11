@@ -15,14 +15,15 @@ const User = require('./models/user');
 const passport = require('passport');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
-const MongoDBStore = require('connect-mongo');
+const MongoStore = require('connect-mongo');
 
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 // const dbUrl = process.env.DB_URL;
-//'mongodb://localhost:27017/yelp-camp'
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+
+const dbUrl = 'mongodb://localhost:27017/yelp-camp'
+mongoose.connect(dbUrl, {
 	useUnifiedTopology : true
 });
 
@@ -45,7 +46,20 @@ app.use(mongoSanitize({
     replaceWith: '_'
 }));
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'Secret Agent Randy Beans'
+    }
+});
+
+store.on('error', function (err) {
+	console.log("Session Store Error", err);
+})
+
 const sessionConfig = {
+	store,
 	name              : 'session',
 	secret            : 'Secret Agent Randy Beans',
 	resave            : false,
