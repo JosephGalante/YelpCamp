@@ -1,8 +1,8 @@
 <% layout('layouts/boilerplate') %>
 <link rel="stylesheet" href="/stylesheets/campgrounds.css">
-<div class="mb-3" id="map" style="width: 100%; height: 500px;"></div>
+<div class="mb-3" id="clusterMap" style="width: 100%; height: 500px;"></div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center">
+    <div class="d-flex justify-content-between align-items-center">
         <h1>All Campgrounds</h1> 
 
         <div class="dropdown">
@@ -39,9 +39,9 @@
 
                         
                         <a class="campground-link" href="/campgrounds/<%= campground._id %>">
-                        <div class="card-title mb-0" style="display: flex; justify-content: space-between;">
+                        <div class="card-title mb-0 d-flex justify-content-between">
                             <h3 class="mb-0" ><%= campground.title %></h3> 
-                            <h4 class="mb-0">$<%= campground.price %> </h4>
+                            <h4 class="mb-0">$<%= Math.floor(campground.price) %> </h4>
                         </div></a>
 
                         <a class="campground-link" href="/campgrounds/<%= campground._id %>">
