@@ -1,0 +1,277 @@
+<% layout('layouts/boilerplate') %>
+<link rel="stylesheet" href="/stylesheets/stars.css">
+    <div class="row">
+        <div class="col-7">
+            <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <% campground.images.forEach((image, index) => { %>
+                        <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                            <img src="<%= image.url %> " class="d-block w-100 rounded" alt="">
+                        </div>
+                    <% }) %>  
+                </div>
+                <% if (campground.images.length > 1) { %>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#campgroundCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#campgroundCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                <% } %>
+            </div>
+
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <%= campground.title%>
+                    </h2>
+                    <p class="card-text">
+                        <%= campground.description%>
+                    </p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-muted">
+                        <%= campground.location%>
+                    </li>
+                    
+                    <li class="list-group-item">$<%= campground.price %>/night</li>
+                </ul>
+                <% if(currentUser && campground.author.equals(currentUser._id)) {%> 
+                    <div class="card-body">
+                        <a href="/campgrounds/<%= campground._id%>/edit" class="card-link btn btn-info float-start">Edit</a>
+                        <form class="d-inline" action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-danger float-end">Delete</button>
+                        </form>
+                    </div>
+                <% } %> 
+                <div class="card-footer">
+                    <span>Created by <%= campground.author.username%></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-5">
+            <div id="map" class="mb-2" style="width: 100%; height: 300px;"></div>
+
+            <!-- Vertically centered my first HTML element all on my own! Yeay
+                Using Flexbox I centered the 5/4/3/2/1 Star progress label-->
+            <div class="container px-0">
+                <div class="row mb-2">
+                    <div class="col-7">
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: center">
+                            <label for="star-5" class="text-muted me-2">5</label>
+                            <div class="progress" style="width: 100%" >
+                                <div id="star-5" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: start">
+                            <label for="star-4" class="text-muted me-2">4</label>
+                            <div class="progress" style="width: 100%" >
+                                <div id="star-4" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: start">
+                            <label for="star-3" class="text-muted me-2">3</label>
+                            <div class="progress" style="width: 100%" >
+                                <div id="star-3" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: start">
+                            <label for="star-2" class="text-muted me-2">2</label>
+                            <div class="progress" style="width: 100%" >
+                                <div id="star-2" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                        <div class="my-1" style="display: flex; align-items: center; justify-content: start">
+                            <label for="star-1" class="text-muted me-2">1</label>
+                            <div class="progress" style="width: 100%">
+                                <div id="star-1" class="progress-bar bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> 
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-5" style="display: flex; align-items: center; justify-content: center; flex-direction: column">
+                        <% if (campground.reviews.length > 0) { %>
+                            <% let avgRating = 0; %>
+                            <% for(review of campground.reviews) {%>
+                                <% avgRating += review.rating; %>
+                            <% } %>
+                            <% avgRating /= campground.reviews.length; %>
+                            <% let emptyStars = 5 - Math.ceil(Math.round(avgRating * 2) / 2); %> 
+                        
+                            <span class="display-2 me-1"> 
+                                <%= (Math.round(avgRating * 10) / 10).toFixed(1) %>
+                            </span>
+                            <div>
+                            
+                            <% for(let i = 0; i < Math.floor(avgRating); i++) {%>
+                                <i class="fas fa-star full-star" style="color: #fbbd06"></i>
+                            <% } %>
+                            <% if (avgRating - Math.floor(avgRating) >= 0.25) { %>
+                                <i class="fas fa-star-half-alt" style="color: #fbbd06"></i>
+                            <% } %>
+                            <% for(let i = 0; i < emptyStars; i++) {%>
+                                <i class="far fa-star empty-star" style="color: #fbbd06"></i>
+                            <% } %>
+                            </div>
+                        <% } else {%>
+                            <span class="display-2 me-1">N/A</span>
+                        <% } %> 
+
+                        <div class="text-muted">
+                            <%= campground.reviews.length %> reviews
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    
+
+            <% if(currentUser) {%>
+                <h3 class="mt-4" style="text-align: center">Leave a Review!</h3>
+                <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" class="mb-3 validated-form"
+                    novalidate>
+                    <div class="mb-4">
+                        <fieldset class="starability-basic">
+                            <legend><h4>Rating:</h4></legend>
+                            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+                            <input type="radio" id="rating1" name="review[rating]" value="1" />
+                            <label for="rating1" title="Terrible">1 star</label>
+                            <input type="radio" id="rating2" name="review[rating]" value="2" />
+                            <label for="rating2" title="Not good">2 stars</label>
+                            <input type="radio" id="rating3" name="review[rating]" value="3" />
+                            <label for="rating3" title="Average">3 stars</label>
+                            <input type="radio" id="rating4" name="review[rating]" value="4" />
+                            <label for="rating4" title="Very good">4 stars</label>
+                            <input type="radio" id="rating5" name="review[rating]" value="5" />
+                            <label for="rating5" title="Amazing">5 stars</label>
+                        </fieldset>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="body"> <h5>Review:</h5></label>
+                        <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
+                        <div class="valid-feedback">Looks good!</div>
+                    </div>
+                    
+                    <button class="btn btn-success mb-4">Submit</button>
+                </form>
+            <% } %>
+        
+            <% for(let review of campground.reviews) {%>
+                <div class="card mb-4">
+                    <div class="card-body ">
+
+                        <!-- //FIXME : The verticalization of the elements in this section element is incorrect -->
+                        <section style="display: flex; justify-content: flex-start; align-items: center;">
+                            <div style="display: inline-block; flex-direction: row; align-items: center; justify-content: center; height: 40px; width: 40px; border-radius: 50%; background-color: grey;">
+                                <div style="align-self: center; text-align: center; vertical-align: center; margin-top: 0.67em" class="">
+                                    <h6 style="color: white;"><%= review.author.username.charAt(0).toUpperCase()%></h6>
+                                </div>
+                            </div>
+                            <div style="display:inline-block" class="ms-2 mt-2">
+                                <h6><%= review.author.username%></h6>
+                            </div>
+                        </section>
+
+                        <!-- Here I am dynamically adding stars to display the review 
+                        Similarly to how Google Maps, or Yelp would display reviews with stars -->
+                        <% for(let i = 0; i < review.rating; i++) { %>
+                            <i class="fas fa-star full-star" style="color: #fbbd06"></i>
+                        <% } %>
+                        <% for(let j = 5 - review.rating; j > 0; j--) { %>
+                            <i class="far fa-star empty-star" style="color: #fbbd06"></i>
+                        <% } %>
+
+                        <!-- Here I am adding a timestamp similarly looking to Google Maps Reviews -->
+                        <!-- Add 'Years Ago' timestamp -->
+                        <% const review_date = Math.floor((new Date().getTime() - review.date.getTime()) / (1000 * 3600 * 24)) %> 
+                        <% if(review_date > 364) {%> 
+                            <% if(review_date > 364 && review_date < 730) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; last year</span>
+                            <% } else if(review_date >= 730) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; <%= Math.floor(review_date / 365) %> years ago</span>
+                            <% } %>
+
+
+                        <!-- Add 'Months ago' timestamp -->
+                        <% } else if(review_date < 365 && review_date >= 32) {%>
+                            <% if(review_date > 30 && review_date < 60) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; a month ago</span>
+                            <% } else if(review_date >= 60) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; <%= Math.floor(review_date / 30) %> months ago</span>
+                            <% } %>
+
+
+                        <!-- Add 'Weeks ago' timestamp -->
+                        <%} else if(review_date < 32) {%>
+                            <% if(review_date > 6 && review_date < 14) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; last week</span>
+                            <% } else if(review_date >= 14) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; <%= Math.floor(review_date / 7) %> weeks ago</span>
+                            <% } else if(review_date === 1) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; yesterday</span>
+                            <% } else if(review_date === 0) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; today</span>
+                            <% } else if(review_date <= 6) {%>
+                                <span class="text-muted"> &nbsp; - &nbsp; <%= review_date %> days ago</span>
+                            <% } %>
+                        <% } %> 
+
+                        <p class="card-text"><%= review.body %></p>
+
+                        <% if(currentUser && review.author.equals(currentUser._id)) {%>
+                            <form action="/campgrounds/<%= campground._id %>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        <% } %> 
+                    </div>
+                </div>
+            <% } %>
+            <% if(!currentUser){%>
+                <div class="h3 mt-3" style="display: flex; justify-content: center; text-align: center">Login/Sign Up To Leave A
+                    Review!
+                </div>
+            <%}%>
+        </div>  
+        
+    </div>
+    
+
+<script>
+    const mapToken = '<%-process.env.MAPBOX_TOKEN %>';
+    const campground = <%-JSON.stringify(campground)%>;
+
+    const ratings = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+    }
+
+    let avgRating = 0;
+    for(review of campground.reviews){
+        ratings[`${review.rating}`] = ratings[`${review.rating}`] + 1; 
+        avgRating += review.rating;
+    }
+    avgRating /= campground.reviews.length;
+    avgRating = (Math.round(avgRating * 10) / 10).toFixed(1)
+    
+    for(const [rating, total] of Object.entries(ratings)){
+        const bar = document.getElementById(`star-${rating}`);
+        const barWidth = `${Math.round(total / campground.reviews.length * 100)}%`;
+        bar.style.width = barWidth;
+    }
+
+    
+
+    
+</script>
+
+<!-- Dynamically filling out star rating progress bars -->
+<script src="/javascripts/showPageMap.js"></script>
+    
